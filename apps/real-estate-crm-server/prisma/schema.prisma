@@ -1,0 +1,73 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Appointment {
+  agent       Agent?                 @relation(fields: [agentId], references: [id])
+  agentId     String?
+  client      Client?                @relation(fields: [clientId], references: [id])
+  clientId    String?
+  createdAt   DateTime               @default(now())
+  date        DateTime?
+  description String?
+  id          String                 @id @default(cuid())
+  property    Property?              @relation(fields: [propertyId], references: [id])
+  propertyId  String?
+  status      EnumAppointmentStatus?
+  time        DateTime?
+  updatedAt   DateTime               @updatedAt
+}
+
+model Agent {
+  appointments  Appointment[]
+  createdAt     DateTime      @default(now())
+  email         String?
+  id            String        @id @default(cuid())
+  licenseNumber String?
+  name          String?
+  phoneNumber   String?
+  properties    Property[]
+  updatedAt     DateTime      @updatedAt
+}
+
+model Property {
+  address      String?
+  agent        Agent?              @relation(fields: [agentId], references: [id])
+  agentId      String?
+  appointments Appointment[]
+  client       Client?             @relation(fields: [clientId], references: [id])
+  clientId     String?
+  createdAt    DateTime            @default(now())
+  description  String?
+  id           String              @id @default(cuid())
+  listedDate   DateTime?
+  price        Float?
+  status       EnumPropertyStatus?
+  updatedAt    DateTime            @updatedAt
+}
+
+model Client {
+  address      String?
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  email        String?
+  firstName    String?
+  id           String        @id @default(cuid())
+  lastName     String?
+  phoneNumber  String?
+  properties   Property[]
+  updatedAt    DateTime      @updatedAt
+}
+
+enum EnumAppointmentStatus {
+  Option1
+}
+
+enum EnumPropertyStatus {
+  Option1
+}
